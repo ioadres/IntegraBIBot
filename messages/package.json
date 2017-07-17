@@ -2,9 +2,9 @@
   "name": "integrabibot",
   "version": "1.0.0",
   "description": "Bot para solicitar reportes",
-  "main": "messages/index.js",
+  "main": "index.js",
   "scripts": {
-    "start": "node some/folder/app.js"
+    "start": "node index.js"
   },
   "keywords": [
     "bot",
