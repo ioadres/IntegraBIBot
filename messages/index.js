@@ -2,7 +2,7 @@ const moment = require('moment');
 const builder = require('botbuilder');
 const botbuilder_azure = require("botbuilder-azure");
 const path = require('path');
-const environment = process.env.NODE_ENV || 'development';
+const environment = process.env['BotEnv'] || 'development';
 
 var useEmulator = (environment == 'development');
 
