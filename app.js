@@ -1,13 +1,35 @@
 const moment = require('moment');
 const builder = require('botbuilder');
-const restify = require('restify');
-const server = restify.createServer();
+const botbuilder_azure = require("botbuilder-azure");
+const path = require('path');
+const environment = process.env.NODE_ENV || 'development';
 
-// Setup bot
-const connector = new builder.ChatConnector({
-    appId: process.env.MICROSOFT_APP_ID,
-    appPassword: process.env.MICROSOFT_APP_PASSWORD
+var useEmulator = (environment == 'development');
+
+var connector = useEmulator ? new builder.ChatConnector({
+    appId: '',
+    appPassword: ''
+})
+: new botbuilder_azure.BotServiceConnector({
+    appId: process.env['MicrosoftAppId'],
+    appPassword: process.env['MicrosoftAppPassword'],
+    stateEndpoint: process.env['BotStateEndpoint'],
+    openIdMetadata: process.env['BotOpenIdMetadata']
 });
+
+var bot = new builder.UniversalBot(connector);
+bot.localePath(path.join(__dirname, './locale'));
+
+if (useEmulator) {
+    var restify = require('restify');
+    var server = restify.createServer();
+    server.listen(8080, function() {
+        console.log('test bot endpont at http://localhost:8080/api/messages');
+    });
+    server.post('/api/messages', connector.listen());    
+} else {
+    module.exports = { default: connector.listen() }
+}
 
 // Setup LUIS
 const recognizer = new builder.LuisRecognizer('https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/3add9274-63c0-4c28-8ae9-b4367d22d25a?subscription-key=ca9377b54a90423dbdfc49f7a6e6bc1c&timezoneOffset=60&verbose=true&q=');
@@ -47,13 +69,5 @@ intents.matches('Limpiar', function (session, results) {
 
 intents.onDefault(builder.DialogAction.send('No he entendido lo que quieres decir'));
 
-//********************************************************************************************* */
-// Setup Restify Server
-server.listen(process.env.port || process.env.PORT || 8080, function () {
-   console.log('%s listening to %s', server.name, server.url); 
-});
-// Listen for messages from users 
-server.post('/api/messages', connector.listen());
 
-const bot = new builder.UniversalBot(connector);
 bot.dialog('/', intents);
