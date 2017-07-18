@@ -40,9 +40,6 @@ intents.matches('Saludar', function (session, results) {
     console.log(session.message.user.id);
     console.log(session.message.user.name);
     session.send('Hola ¿En que te puedo ayudar? ' + session.message.user.id);
-
-    
-    $("#ValueReportParent").val("Dolly Duck");
 });
 
 
