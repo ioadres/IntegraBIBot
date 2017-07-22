@@ -109,6 +109,7 @@ intents.matches('Saludar', function(session, results) {
     console.log(session.message.user.name);
     session.send('Hola ¿En que te puedo ayudar? ' + session.message.user.id);
     var msg = new builder.Message(session).addAttachment(cardtemp);
+    session.send(msg).endDialog();
 });
 
 
