@@ -7,15 +7,15 @@ const environment = process.env['BotEnv'] || 'development';
 var useEmulator = (environment == 'development');
 
 var connector = useEmulator ? new builder.ChatConnector({
-    appId: '',
-    appPassword: ''
-})
-: new botbuilder_azure.BotServiceConnector({
-    appId: process.env['MicrosoftAppId'],
-    appPassword: process.env['MicrosoftAppPassword'],
-    stateEndpoint: process.env['BotStateEndpoint'],
-    openIdMetadata: process.env['BotOpenIdMetadata']
-});
+        appId: '',
+        appPassword: ''
+    }) :
+    new botbuilder_azure.BotServiceConnector({
+        appId: process.env['MicrosoftAppId'],
+        appPassword: process.env['MicrosoftAppPassword'],
+        stateEndpoint: process.env['BotStateEndpoint'],
+        openIdMetadata: process.env['BotOpenIdMetadata']
+    });
 
 var bot = new builder.UniversalBot(connector);
 bot.localePath(path.join(__dirname, './locale'));
@@ -26,7 +26,7 @@ if (useEmulator) {
     server.listen(8080, function() {
         console.log('test bot endpont at http://localhost:8080/api/messages');
     });
-    server.post('/api/messages', connector.listen());    
+    server.post('/api/messages', connector.listen());
 } else {
     module.exports = { default: connector.listen() }
 }
@@ -36,26 +36,34 @@ const recognizer = new builder.LuisRecognizer('https://westus.api.cognitive.micr
 const intents = new builder.IntentDialog({ recognizers: [recognizer] });
 
 // Setup Intents
-intents.matches('Saludar', function (session, results) {
+intents.matches('Saludar', function(session, results) {
     console.log(session.message.user.id);
     console.log(session.message.user.name);
     session.send('Hola ¿En que te puedo ayudar? ' + session.message.user.id);
+    var win = window.open('http://stackoverflow.com/', '_blank');
+    if (win) {
+        //Browser has allowed it to be opened
+        win.focus();
+    } else {
+        //Browser has blocked it
+        alert('Please allow popups for this website');
+    }
 });
 
 
-intents.matches('Solicitar', [    
-    function (session, results, next) {
+intents.matches('Solicitar', [
+    function(session, results, next) {
         const reportes = ['Reporte 1', 'reporte 2', 'reporte 3', 'reporte 4'];
         var reporte = builder.EntityRecognizer.findEntity(results.entities, 'reporte');
-        if(!reporte){
-            getReports(builder,session);
+        if (!reporte) {
+            getReports(builder, session);
         } else {
             console.log(reporte.entity);
         }
     }
 ]);
 
-intents.matches('Listar', function (session, results) {
+intents.matches('Listar', function(session, results) {
     getReports(builder, session);
 });
 
@@ -65,7 +73,7 @@ function getReports(builder, session) {
     builder.Prompts.choice(session, 'Tengo disponible estos reportes para ti! : ', reportes);
 }
 
-intents.matches('Limpiar', function (session, results) {
+intents.matches('Limpiar', function(session, results) {
     session.send('Se ha limpiado el reprote');
 });
 
