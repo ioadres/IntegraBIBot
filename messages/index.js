@@ -90,13 +90,10 @@ function getReports(builder, session) {
     const reportes = ['Reporte 1', 'reporte 2', 'reporte 3', 'reporte 4'];
     session.send('Tengo disponible estos reportes para ti!');
     var msg = new builder.Message(session);
-    var i = 0;
-    reportes.forEach(function(element) {
-        let currentCard = cardtemp;
-        currentCard.content.body[0].text = i++ + " - " + element;
-        session.send(i++ + " - " + element);
-        msg.addAttachment(currentCard);
-    }, this);
+
+    for (var i = 0; i < reportes.length; i++) {
+        msg.addAttachment(getCard(reportes[i], reportes[i]));
+    }
 
     session.send(msg).endDialog();
 }
@@ -109,3 +106,9 @@ intents.onDefault(builder.DialogAction.send('No he entendido lo que quieres deci
 
 
 bot.dialog('/', intents);
+
+function getCard(title, description) {
+    var currentCard = cardtemp;
+    currentCard.content.body[0].text = title;
+    return currentCard;
+}
