@@ -65,14 +65,8 @@ const intents = new builder.IntentDialog({ recognizers: [recognizer] });
 intents.matches('Saludar', function(session, results) {
     console.log(session.message.user.id);
     console.log(session.message.user.name);
-    var currentCard = cardtemp;
-    currentCard.content.body[0].text = "Reporte Numero 2";
 
     session.send('Hola ¿En que te puedo ayudar? ' + session.message.user.id);
-    var msg = new builder.Message(session);
-    msg.addAttachment(currentCard);
-    msg.addAttachment(currentCard);
-    session.send(msg).endDialog();
 });
 
 
@@ -81,6 +75,7 @@ intents.matches('Solicitar', [
         const reportes = ['Reporte 1', 'reporte 2', 'reporte 3', 'reporte 4'];
         var reporte = builder.EntityRecognizer.findEntity(results.entities, 'reporte');
         if (!reporte) {
+            session.send('Upss! No he logrado identificar el reporte');
             getReports(builder, session);
         } else {
             console.log(reporte.entity);
@@ -94,8 +89,16 @@ intents.matches('Listar', function(session, results) {
 
 function getReports(builder, session) {
     const reportes = ['Reporte 1', 'reporte 2', 'reporte 3', 'reporte 4'];
-    session.send('Upss! No he logrado identificar el reporte');
-    builder.Prompts.choice(session, 'Tengo disponible estos reportes para ti! : ', reportes);
+    session.send('Tengo disponible estos reportes para ti!');
+    var currentCard = cardtemp;
+    var msg = new builder.Message(session);
+
+    reportes.forEach(function(element) {
+        currentCard.content.body[0].text = element;
+        msg.addAttachment(currentCard);
+    }, this);
+
+    session.send(msg).endDialog();
 }
 
 intents.matches('Limpiar', function(session, results) {
