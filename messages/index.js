@@ -9,16 +9,18 @@ const cardtemp = {
     content: {
         type: "AdaptiveCard",
         body: [{
-            "type": "TextBlock",
-            "text": "Reporte : ",
-            "size": "large",
-            "weight": "bolder"
-        }],
-        "actions": [{
-            "Type": "openUrl",
-            "url": "http://google.com",
-            "title": "Acceder"
-        }]
+                "type": "TextBlock",
+                "text": "Reporte : ",
+                "size": "large",
+                "weight": "bolder"
+            },
+            {
+                "type": "openUrl",
+                "url": "http://google.com",
+                "title": "Acceder"
+            },
+
+        ]
     }
 };
 
