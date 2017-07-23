@@ -65,7 +65,6 @@ const intents = new builder.IntentDialog({ recognizers: [recognizer] });
 intents.matches('Saludar', function(session, results) {
     console.log(session.message.user.id);
     console.log(session.message.user.name);
-
     session.send('Hola ¿En que te puedo ayudar? ' + session.message.user.id);
 });
 
@@ -90,10 +89,10 @@ intents.matches('Listar', function(session, results) {
 function getReports(builder, session) {
     const reportes = ['Reporte 1', 'reporte 2', 'reporte 3', 'reporte 4'];
     session.send('Tengo disponible estos reportes para ti!');
-    var currentCard = cardtemp;
     var msg = new builder.Message(session);
 
     reportes.forEach(function(element) {
+        var currentCard = cardtemp;
         currentCard.content.body[0].text = element;
         msg.addAttachment(currentCard);
     }, this);
