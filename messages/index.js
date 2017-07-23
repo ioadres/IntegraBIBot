@@ -93,7 +93,7 @@ function getReports(builder, session) {
     var i = 0;
     reportes.forEach(function(element) {
         let currentCard = cardtemp;
-        currentCard.content.body[0].text = element;
+        currentCard.content.body[0].text = i++ + " - " + element;
         session.send(i++ + " - " + element);
         msg.addAttachment(currentCard);
     }, this);
