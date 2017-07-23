@@ -108,7 +108,29 @@ intents.onDefault(builder.DialogAction.send('No he entendido lo que quieres deci
 bot.dialog('/', intents);
 
 function getCard(title, description) {
-    var currentCard = cardtemp;
+    var currentCard = {
+        contentType: "application/vnd.microsoft.card.adaptive",
+        content: {
+            type: "AdaptiveCard",
+            body: [{
+                    "type": "TextBlock",
+                    "text": "Reporte : ",
+                    "size": "large",
+                    "weight": "bolder"
+                },
+                {
+                    "type": "TextBlock",
+                    "text": "*Descripción*"
+                }
+            ],
+            "actions": [{
+                "type": "Action.OpenUrl",
+                "url": "http://adaptivecards.io",
+                "title": "Acceder"
+            }]
+        }
+    };
+
     currentCard.content.body[0].text = title;
     return currentCard;
 }
