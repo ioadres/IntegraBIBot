@@ -15,10 +15,9 @@ const cardtemp = {
                 "weight": "bolder"
             },
             {
-                "type": "openUrl",
-                "url": "http://google.com",
-                "title": "Acceder"
-            },
+                "type": "TextBlock",
+                "text": "*Descripción*"
+            }
         ],
         "actions": [{
             "type": "Action.OpenUrl",
@@ -70,7 +69,9 @@ intents.matches('Saludar', function(session, results) {
     currentCard.content.body[0].text = "Reporte Numero 2";
 
     session.send('Hola ¿En que te puedo ayudar? ' + session.message.user.id);
-    var msg = new builder.Message(session).addAttachment(currentCard);
+    var msg = new builder.Message(session);
+    msg.addAttachment(currentCard);
+    msg.addAttachment(currentCard);
     session.send(msg).endDialog();
 });
 
