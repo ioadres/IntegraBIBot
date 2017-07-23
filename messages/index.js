@@ -19,8 +19,12 @@ const cardtemp = {
                 "url": "http://google.com",
                 "title": "Acceder"
             },
-
-        ]
+        ],
+        "actions": [{
+            "type": "Action.OpenUrl",
+            "url": "http://adaptivecards.io",
+            "title": "Acceder"
+        }]
     }
 };
 
