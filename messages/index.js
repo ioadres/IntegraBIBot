@@ -90,11 +90,11 @@ function getReports(builder, session) {
     const reportes = ['Reporte 1', 'reporte 2', 'reporte 3', 'reporte 4'];
     session.send('Tengo disponible estos reportes para ti!');
     var msg = new builder.Message(session);
-
+    var i = 0;
     reportes.forEach(function(element) {
         let currentCard = cardtemp;
         currentCard.content.body[0].text = element;
-        session.send(element);
+        session.send(i++ + " - " + element);
         msg.addAttachment(currentCard);
     }, this);
 
