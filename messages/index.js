@@ -4,18 +4,44 @@ const botbuilder_azure = require("botbuilder-azure");
 const path = require('path');
 const environment = process.env['BotEnv'] || 'development';
 
+const cardtemp = {
+    contentType: "application/vnd.microsoft.card.adaptive",
+    content: {
+        type: "AdaptiveCard",
+        body: [{
+                "type": "TextBlock",
+                "text": "Reporte : ",
+                "size": "large",
+                "weight": "bolder"
+            },
+            {
+                "type": "TextBlock",
+                "text": "*Descripción*"
+            }
+        ],
+        "actions": [{
+            "type": "Action.OpenUrl",
+            "url": "http://adaptivecards.io",
+            "title": "Acceder"
+        }]
+    }
+};
+
+
+
+
 var useEmulator = (environment == 'development');
 
 var connector = useEmulator ? new builder.ChatConnector({
-    appId: '',
-    appPassword: ''
-})
-: new botbuilder_azure.BotServiceConnector({
-    appId: process.env['MicrosoftAppId'],
-    appPassword: process.env['MicrosoftAppPassword'],
-    stateEndpoint: process.env['BotStateEndpoint'],
-    openIdMetadata: process.env['BotOpenIdMetadata']
-});
+        appId: '',
+        appPassword: ''
+    }) :
+    new botbuilder_azure.BotServiceConnector({
+        appId: process.env['MicrosoftAppId'],
+        appPassword: process.env['MicrosoftAppPassword'],
+        stateEndpoint: process.env['BotStateEndpoint'],
+        openIdMetadata: process.env['BotOpenIdMetadata']
+    });
 
 var bot = new builder.UniversalBot(connector);
 bot.localePath(path.join(__dirname, './locale'));
@@ -26,7 +52,7 @@ if (useEmulator) {
     server.listen(8080, function() {
         console.log('test bot endpont at http://localhost:8080/api/messages');
     });
-    server.post('/api/messages', connector.listen());    
+    server.post('/api/messages', connector.listen());
 } else {
     module.exports = { default: connector.listen() }
 }
@@ -36,7 +62,7 @@ const recognizer = new builder.LuisRecognizer('https://westus.api.cognitive.micr
 const intents = new builder.IntentDialog({ recognizers: [recognizer] });
 
 // Setup Intents
-intents.matches('Saludar', function (session, results) {
+intents.matches('Saludar', function(session, results) {
     console.log(session.message.user.id);
     console.log(session.message.user.name);
 
@@ -52,29 +78,36 @@ session.send(read_cookie("tokenintegrabi"));
 });
 
 
-intents.matches('Solicitar', [    
-    function (session, results, next) {
+intents.matches('Solicitar', [
+    function(session, results, next) {
         const reportes = ['Reporte 1', 'reporte 2', 'reporte 3', 'reporte 4'];
         var reporte = builder.EntityRecognizer.findEntity(results.entities, 'reporte');
-        if(!reporte){
-            getReports(builder,session);
+        if (!reporte) {
+            session.send('Upss! No he logrado identificar el reporte');
+            getReports(builder, session);
         } else {
             console.log(reporte.entity);
         }
     }
 ]);
 
-intents.matches('Listar', function (session, results) {
+intents.matches('Listar', function(session, results) {
     getReports(builder, session);
 });
 
 function getReports(builder, session) {
     const reportes = ['Reporte 1', 'reporte 2', 'reporte 3', 'reporte 4'];
-    session.send('Upss! No he logrado identificar el reporte');
-    builder.Prompts.choice(session, 'Tengo disponible estos reportes para ti! : ', reportes);
+    session.send('Tengo disponible estos reportes para ti!');
+    var msg = new builder.Message(session);
+
+    for (var i = 0; i < reportes.length; i++) {
+        msg.addAttachment(getCard(reportes[i], reportes[i]));
+    }
+
+    session.send(msg).endDialog();
 }
 
-intents.matches('Limpiar', function (session, results) {
+intents.matches('Limpiar', function(session, results) {
     session.send('Se ha limpiado el reprote');
 });
 
@@ -82,3 +115,31 @@ intents.onDefault(builder.DialogAction.send('No he entendido lo que quieres deci
 
 
 bot.dialog('/', intents);
+
+function getCard(title, description) {
+    var currentCard = {
+        contentType: "application/vnd.microsoft.card.adaptive",
+        content: {
+            type: "AdaptiveCard",
+            body: [{
+                    "type": "TextBlock",
+                    "text": "Reporte : ",
+                    "size": "large",
+                    "weight": "bolder"
+                },
+                {
+                    "type": "TextBlock",
+                    "text": "*Descripción*"
+                }
+            ],
+            "actions": [{
+                "type": "Action.OpenUrl",
+                "url": "http://adaptivecards.io",
+                "title": "Acceder"
+            }]
+        }
+    };
+
+    currentCard.content.body[0].text = title;
+    return currentCard;
+}
