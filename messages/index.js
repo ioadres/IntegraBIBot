@@ -90,7 +90,7 @@ function getReports(builder, session) {
         //session.message.user.id
         if(response && response.statusCode == 200) {
                         
-            session.send('Tengo disponible estos graficos para ti!');
+            session.send('Tengo disponible estos gráficos para ti!');
 
             var charts = JSON.parse(body);
             var msg = new builder.Message(session);
