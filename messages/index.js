@@ -147,9 +147,3 @@ function getCard(title, description) {
     currentCard.content.body[0].text = title;
     return currentCard;
 }
-
-
-
-function login() {
-
-}
