@@ -67,6 +67,7 @@ const intents = new builder.IntentDialog({ recognizers: [recognizer] });
 // Setup Intents
 intents.matches('Saludar', function(session, results) {
 
+     session.send('url:', url+session.message.user.id);
     request(url+session.message.user.id, function (error, response, body) {
         console.log('error:', error); // Print the error if one occurred
         console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
