@@ -68,7 +68,7 @@ const intents = new builder.IntentDialog({ recognizers: [recognizer] });
 intents.matches('Saludar', function(session, results) {
 
      session.send('url:', url+session.message.user.id);
-    request(url+session.message.user.id, function (error, response, body) {
+    request("http://integrabiapi.azurewebsites.net/api/ReportBot/GetReports?UserId="+session.message.user.id, function (error, response, body) {
         console.log('error:', error); // Print the error if one occurred
         console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
         console.log('body:', body); // Print the HTML for the Google homepage.
