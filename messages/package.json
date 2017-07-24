@@ -25,6 +25,7 @@
     "botbuilder-azure": "^3.0.2",
     "microsoft-adaptivecards": "^0.6.0",
     "path": "^0.12.7",
+    "request": "^2.81.0",
     "restify": "^5.0.0"
   }
 }

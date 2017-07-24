@@ -2,6 +2,9 @@ const moment = require('moment');
 const builder = require('botbuilder');
 const botbuilder_azure = require("botbuilder-azure");
 const path = require('path');
+const request = require('request');
+
+const url = "http://integrabiapi.azurewebsites.net/api/ReportBot/GetReports?UserId="
 const environment = process.env['BotEnv'] || 'development';
 
 const cardtemp = {
@@ -63,6 +66,15 @@ const intents = new builder.IntentDialog({ recognizers: [recognizer] });
 
 // Setup Intents
 intents.matches('Saludar', function(session, results) {
+
+    request(url+session.message.user.id, function (error, response, body) {
+        console.log('error:', error); // Print the error if one occurred
+        console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+        console.log('body:', body); // Print the HTML for the Google homepage.
+        session.send('Hola ¿En que te puedo ayudar? ' + response[0].name);
+    });
+    
+   
     console.log(session.message.user.id);
     console.log(session.message.user.name);
 
@@ -134,4 +146,10 @@ function getCard(title, description) {
 
     currentCard.content.body[0].text = title;
     return currentCard;
+}
+
+
+
+function login() {
+
 }
