@@ -72,8 +72,9 @@ function getReports(builder, session) {
             for (var i = 0; i < charts.length; i++) {
                 msg.addAttachment(getCard(charts[i].name, charts[i].description, charts[i].url));
             }
-
             session.send(msg).endDialog();
+        } else {
+            session.send('No se ha podido realizar la acción solicitada');
         }
         
     });
