@@ -36,8 +36,8 @@ const cardtemp = {
 var useEmulator = (environment == 'development');
 
 var connector = useEmulator ? new builder.ChatConnector({
-        appId: '',
-        appPassword: ''
+       appId: '', //process.env.MICROSOFT_APP_ID,
+    appPassword: ''// process.env.MICROSOFT_APP_PASSWORD //f1Qak4SsFgYn4Y3eFd4Xi4k
     }) :
     new botbuilder_azure.BotServiceConnector({
         appId: process.env['MicrosoftAppId'],
@@ -67,15 +67,6 @@ const intents = new builder.IntentDialog({ recognizers: [recognizer] });
 // Setup Intents
 intents.matches('Saludar', function(session, results) {
 
-     session.send('url:', url+session.message.user.id);
-    request("http://integrabiapi.azurewebsites.net/api/ReportBot/GetReports?UserId="+session.message.user.id, function (error, response, body) {
-        console.log('error:', error); // Print the error if one occurred
-        console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
-        console.log('body:', body); // Print the HTML for the Google homepage.
-        session.send('Hola ¿En que te puedo ayudar? ' + response[0].name);
-    });
-    
-   
     console.log(session.message.user.id);
     console.log(session.message.user.name);
 
@@ -85,14 +76,7 @@ intents.matches('Saludar', function(session, results) {
 
 intents.matches('Solicitar', [
     function(session, results, next) {
-        const reportes = ['Reporte 1', 'reporte 2', 'reporte 3', 'reporte 4'];
-        var reporte = builder.EntityRecognizer.findEntity(results.entities, 'reporte');
-        if (!reporte) {
-            session.send('Upss! No he logrado identificar el reporte');
-            getReports(builder, session);
-        } else {
-            console.log(reporte.entity);
-        }
+        
     }
 ]);
 
@@ -101,19 +85,30 @@ intents.matches('Listar', function(session, results) {
 });
 
 function getReports(builder, session) {
-    const reportes = ['Reporte 1', 'reporte 2', 'reporte 3', 'reporte 4'];
-    session.send('Tengo disponible estos reportes para ti!');
-    var msg = new builder.Message(session);
 
-    for (var i = 0; i < reportes.length; i++) {
-        msg.addAttachment(getCard(reportes[i], reportes[i]));
-    }
+    request("http://integrabiapi.azurewebsites.net/api/ReportBot/GetCharts?UserId="+session.message.user.id, function (error, response, body) {
+        //session.message.user.id
+        if(response && response.statusCode == 200) {
+                        
+            session.send('Tengo disponible estos graficos para ti!');
 
-    session.send(msg).endDialog();
+            var charts = JSON.parse(body);
+            var msg = new builder.Message(session);
+
+            for (var i = 0; i < charts.length; i++) {
+                msg.addAttachment(getCard(charts[i].name, charts[i].description, charts[i].url));
+            }
+
+            session.send(msg).endDialog();
+        }
+        
+    });
+
+    
 }
 
 intents.matches('Limpiar', function(session, results) {
-    session.send('Se ha limpiado el reprote');
+
 });
 
 intents.onDefault(builder.DialogAction.send('No he entendido lo que quieres decir'));
@@ -121,7 +116,7 @@ intents.onDefault(builder.DialogAction.send('No he entendido lo que quieres deci
 
 bot.dialog('/', intents);
 
-function getCard(title, description) {
+function getCard(title, description, url) {
     var currentCard = {
         contentType: "application/vnd.microsoft.card.adaptive",
         content: {
@@ -146,5 +141,7 @@ function getCard(title, description) {
     };
 
     currentCard.content.body[0].text = title;
+    currentCard.content.body[1].text = description;
+    currentCard.content.actions[0].url = url;
     return currentCard;
 }
