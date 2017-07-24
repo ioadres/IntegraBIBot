@@ -66,14 +66,6 @@ intents.matches('Saludar', function(session, results) {
     console.log(session.message.user.id);
     console.log(session.message.user.name);
 
-    function read_cookie(name) {
-    var result = document.cookie.match(new RegExp(name + '=([^;]+)'));
-    result && (result = JSON.parse(result[1]));
-    return result;
-    }
-
-session.send(read_cookie("tokenintegrabi"));
-
     session.send('Hola ¿En que te puedo ayudar? ' + session.message.user.id);
 });
 
