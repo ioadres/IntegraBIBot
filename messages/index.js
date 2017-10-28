@@ -35,7 +35,7 @@ if (useEmulator) {
 }
 
 // Setup LUIS
-const recognizer = new builder.LuisRecognizer('https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/3add9274-63c0-4c28-8ae9-b4367d22d25a?subscription-key=ca9377b54a90423dbdfc49f7a6e6bc1c&timezoneOffset=60&verbose=true&q=');
+const recognizer = new builder.LuisRecognizer('https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/3add9274-63c0-4c28-8ae9-b4367d22d25a?subscription-key=ca9377b54a90423dbdfc49f7a6e6bc1c&timezoneOffset=0&verbose=true&q=');
 const intents = new builder.IntentDialog({ recognizers: [recognizer] });
 
 // Setup Intents
